@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { createUserWithEmailAndPassword, getAuth,signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth,sendEmailVerification,signInWithEmailAndPassword } from 'firebase/auth';
 import app from './firebase_init';
 import { useState } from "react";
 
@@ -21,7 +21,7 @@ function App() {
 
   const handleSubmit=(e)=>{
     e.preventDefault();
-    console.log("Submitted",email,password);
+    // console.log("Submitted",email,password);
     if (registered) {
       signInWithEmailAndPassword(auth, email, password)
         .then((result) => {
@@ -35,10 +35,12 @@ function App() {
     } else {
       createUserWithEmailAndPassword(auth, email, password)
         .then((result) => {
+          console.log(email,password);
           const user = result.user;
           console.log(user);
           setEmail("");
           setPassword("");
+          verifyEmail();
         })
         .catch((error) => {
           console.error(error);
@@ -46,6 +48,12 @@ function App() {
         });
     }
     e.preventDefault();
+  }
+  const verifyEmail=()=>{
+    sendEmailVerification(auth.currentUser)
+    .then(()=>{
+      console.log("Verification Email Sent");
+    })
   }
   const emailOnBlur=(e)=>{
     setEmail(e.target.value);
@@ -87,7 +95,7 @@ function App() {
             />
           </Form.Group>
           <p className="text-danger">{error}</p>
-          {console.log(registered)}
+          
           <Button variant="primary" type="submit">
             {registered? "Login":"Register"}
           </Button>
