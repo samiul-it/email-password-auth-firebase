@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
-import { createUserWithEmailAndPassword, getAuth,sendEmailVerification,signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, getAuth,sendEmailVerification,sendPasswordResetEmail,signInWithEmailAndPassword } from 'firebase/auth';
 import app from './firebase_init';
 import { useState } from "react";
 
@@ -58,13 +58,22 @@ function App() {
   const emailOnBlur=(e)=>{
     setEmail(e.target.value);
   }
+  const handleForgetPassword=()=>{
+    sendPasswordResetEmail(auth,email)
+    .then(()=>{
+      console.log("Password Reset Email sent");
+    })
+  }
   const passwordOnBlur=(e)=>{
     setPassword(e.target.value);
   }
   return (
     <div>
       <div className="registration w-50 mx-auto mt-5">
-        <h2 className="text-primary"> Please {registered? "Login":"Register"}</h2>
+        <h2 className="text-primary">
+          {" "}
+          Please {registered ? "Login" : "Register"}
+        </h2>
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="formBasicEmail">
             <Form.Label>Email address</Form.Label>
@@ -94,10 +103,11 @@ function App() {
               label="Already Registered?"
             />
           </Form.Group>
+          <Button onClick={handleForgetPassword} variant="link">Forget Password? </Button>
           <p className="text-danger">{error}</p>
-          
+
           <Button variant="primary" type="submit">
-            {registered? "Login":"Register"}
+            {registered ? "Login" : "Register"}
           </Button>
         </Form>
       </div>
